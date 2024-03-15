@@ -1,6 +1,6 @@
 ﻿﻿using System;
 using System.Linq;
-using DAL.Factories;
+using KingPriceTest.DAL.Factories;
 using FluentAssertions;
 using NUnit.Framework;
 

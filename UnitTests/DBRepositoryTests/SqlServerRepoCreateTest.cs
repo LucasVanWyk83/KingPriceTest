@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using DAL.Factories;
-using DAL.Repositories;
-using DAL.Models;
+using KingPriceTest.DAL.Factories;
+using KingPriceTest.DAL.Repositories;
+using KingPriceTest.DAL.Models;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -24,7 +24,7 @@ namespace UnitTests.DBRepositoryTests
                 Email = "admin@admin.com",
 				Password = "admin",
 				Approved = true,
-				CreatedDateTime = DateTime.Now(),
+				CreatedDateTime = DateTime.Now,
 				UpdatedDateTime = null
             };
 

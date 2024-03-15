@@ -53,7 +53,7 @@ namespace KingPriceTest.DAL.Models
 			UpdatedDateTime = id ==null ? null : DateTime.Now;
         }
 		
-		public User(int id, string firstName, string lastName, string email, string password, bool approved, DateTime? createdDateTime, DateTime? updatedDateTime)
+		public User(int id, string firstName, string lastName, string email, string password, bool approved, DateTime createdDateTime, DateTime? updatedDateTime)
         {
             Id = id;
 			FirstName = firstName;
@@ -61,7 +61,7 @@ namespace KingPriceTest.DAL.Models
 			Email = email;
 			Password = password;
 			Approved = approved;
-			CreatedDateTime = createdDateTime == null ? DateTime.Now : createdDateTime;
+			CreatedDateTime = createdDateTime;
 			UpdatedDateTime = updatedDateTime == null ? null : DateTime.Now;
         }
     }
