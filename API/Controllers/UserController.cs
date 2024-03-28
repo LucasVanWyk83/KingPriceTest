@@ -27,7 +27,7 @@ namespace KingPriceTest.API.Controllers
 		
 		// GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<int> GetUserCount()
+        public async Task<ActionResult<int>> GetUserCount()
         {
 	    IQueryable<User> records = await _context.User;
 	    var count = records.Count();

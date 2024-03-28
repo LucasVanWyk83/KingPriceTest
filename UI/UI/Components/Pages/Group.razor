@@ -14,10 +14,10 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <EditForm Model="group" OnSubmit="AddGroup" Enhance>
+                    <EditForm Model="g" OnSubmit="AddGroup" Enhance>
                         <div class="hstack gap-2">
                             <label class="label-control">Name</label>
-                            <InputText @bind-Value="group.Name" class="form-control"></InputText>
+                            <InputText @bind-Value="g.Name" class="form-control"></InputText>
                             
                             <button type="submit" class="btn btn-primary">Save</button>
                         </div>
@@ -30,7 +30,7 @@
 
 @code {
      [SupplyParameterFromForm]
-    Permission group { get; set; } = new();
+    Group g { get; set; } = new();
 	
 	protected override void OnInitialized()
     {
@@ -38,7 +38,7 @@
     }
     async Task AddGroup()
     {
-        NavigationManager.NavigateTo($"users");
+        NavigationManager.NavigateTo($"groups");
     }
 	
 	public class Group
