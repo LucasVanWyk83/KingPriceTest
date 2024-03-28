@@ -2,6 +2,8 @@
 using KingPriceTest.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.Extensions.Configuration;
 
 namespace KingPriceTest.DAL.Factories
 {
@@ -9,13 +11,12 @@ namespace KingPriceTest.DAL.Factories
     {
         public KingPriceTestDbContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<KingPriceTestDbContext>();
-            var connectionString = Environment.GetEnvironmentVariable("SQLSERVER_LOCAL_CONNSTR");
-           // optionsBuilder.(connectionString
-            //                            ?? throw new NullReferenceException(
-            //                                $"Connection string is not got from environment {nameof(connectionString)}"));
-
-            return new KingPriceTestDbContext(optionsBuilder.Options);
+			IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../API/appsettings.json").Build(); 
+			var builder = new DbContextOptionsBuilder<KingPriceTestDbContext>(); 
+			var connectionString = configuration.GetConnectionString("DatabaseConnection"); 
+			builder.UseSqlServer(connectionString); 
+			
+			return new KingPriceTestDbContext(builder.Options);
         }
     }
 }

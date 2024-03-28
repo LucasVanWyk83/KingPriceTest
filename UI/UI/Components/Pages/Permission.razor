@@ -1,0 +1,53 @@
+﻿@page "/permission"
+@attribute [StreamRendering]
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@inject IHttpClientFactory ClientFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Permission</PageTitle>
+
+<h1>Permission</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <EditForm Model="permission" OnSubmit="AddPermission" Enhance>
+                        <div class="hstack gap-2">
+                            <label class="label-control">Name</label>
+                            <InputText @bind-Value="permission.Name" class="form-control"></InputText>
+                            
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </EditForm>
+                </div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+     [SupplyParameterFromForm]
+    Permission permission { get; set; } = new();
+	
+	protected override void OnInitialized()
+    {
+        
+    }
+    async Task AddPermission()
+    {
+        NavigationManager.NavigateTo($"users");
+    }
+	
+	public class Permission
+    {
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+		[JsonPropertyName("createdDateTime")]
+		public DateTime CreatedDateTime { get; set; }
+		[JsonPropertyName("updatedDateTime")]
+		public DateTime? UpdatedDateTime { get; set; }
+    }
+}

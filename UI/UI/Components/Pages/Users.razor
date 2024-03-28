@@ -1,0 +1,102 @@
+﻿@page "/users"
+@attribute [StreamRendering]
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IHttpClientFactory ClientFactory
+
+<PageTitle>Users</PageTitle>
+
+<h1>Users</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@if (getUsersError || users is null)
+{
+    <p>Unable to retrieve Users. Please try again later.</p>
+}
+else
+{
+	<div class="page-size-chooser">
+		Items per page:
+		<select @bind="@pagination.ItemsPerPage">
+			<option>5</option>
+			<option>10</option>
+			<option>20</option>
+			<option>50</option>
+		</select>
+	</div>
+	
+    <QuickGrid Items="@users" Pagination="@pagination">
+		<TemplateColumn Title="Actions">
+            <button @onclick="@(() => Edit(context))">Edit</button>
+            <button @onclick="@(() => Delete(context))">Delete</button>
+        </TemplateColumn>
+		<PropertyColumn Property="@(u => u.FirstName)" Sortable="true" />
+		<PropertyColumn Property="@(u => u.LastName)" Sortable="true" />
+		<PropertyColumn Property="@(u => u.Email)" Sortable="true" />
+		<PropertyColumn Property="@(u => u.Approved)" Sortable="true" />
+		
+		
+		<PropertyColumn Property="@(u => u.CreatedDateTime)" Format="yyyy-MM-dd" Sortable="true" />
+		<PropertyColumn Property="@(u => u.UpdateDateTime)" Format="yyyy-MM-dd" Sortable="true" />
+	</QuickGrid>
+}
+
+@code {
+    private IEnumerable<User>? users = [];
+	PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
+    private bool getUsersError;
+    private bool shouldRender;
+
+    protected override bool ShouldRender() => shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get,
+            "https://api.github.com/repos/dotnet/AspNetCore.Docs/branches");
+        request.Headers.Add("Accept", "application/vnd.github.v3+json");
+        request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+
+        var client = ClientFactory.CreateClient();
+
+        var response = await client.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+            users = await JsonSerializer.DeserializeAsync
+                <IEnumerable<User>>(responseStream);
+        }
+        else
+        {
+            getUsersError = true;
+        }
+
+        shouldRender = true;
+    }
+	
+	void Edit(User U) => message = $"You want to hire {p.FirstName} {p.LastName}";
+
+    void Delete(User U) => message = $"You want to fire {p.FirstName} {p.LastName}";
+	
+    public class User
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+		[JsonPropertyName("firstName")]
+        public string? FirstName { get; set; }
+		[JsonPropertyName("lastName")]
+        public string? LastName { get; set; }
+		[JsonPropertyName("email")]
+        public string? Email { get; set; }
+		[JsonPropertyName("password")]
+        public string? Password { get; set; }
+		[JsonPropertyName("approved")]
+        public bool Approved { get; set; }
+        [JsonPropertyName("createdDateTime")]
+		public DateTime CreatedDateTime { get; set; }
+		[JsonPropertyName("updatedDateTime")]
+		public DateTime? UpdatedDateTime { get; set; }
+    }
+}

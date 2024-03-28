@@ -1,4 +1,4 @@
-﻿using KingPriceTest.DAL.Models;
+﻿using KingPriceTest.BLL.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace KingPriceTest.DAL.Repositories

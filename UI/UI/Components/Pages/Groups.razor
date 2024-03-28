@@ -1,0 +1,92 @@
+﻿@page "/groups"
+@attribute [StreamRendering]
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IHttpClientFactory ClientFactory
+
+<PageTitle>Groups</PageTitle>
+
+<h1>Groups</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@if (getGroupsError || groups is null)
+{
+    <p>Unable to retrieve Groups. Please try again later.</p>
+}
+else
+{
+	<div class="page-size-chooser">
+		Items per page:
+		<select @bind="@pagination.ItemsPerPage">
+			<option>5</option>
+			<option>10</option>
+			<option>20</option>
+			<option>50</option>
+		</select>
+	</div>
+	
+    <QuickGrid Items="@groups" Pagination="@pagination">
+		<TemplateColumn Title="Actions">
+            <button @onclick="@(() => Edit(context))">Edit</button>
+            <button @onclick="@(() => Delete(context))">Delete</button>
+        </TemplateColumn>
+		<PropertyColumn Property="@(g => g.Name)" Sortable="true" />
+		<PropertyColumn Property="@(g => g.CreatedDateTime)" Format="yyyy-MM-dd" Sortable="true" />
+		<PropertyColumn Property="@(g => g.UpdateDateTime)" Format="yyyy-MM-dd" Sortable="true" />
+	</QuickGrid>
+}
+
+@code {
+    private IEnumerable<Group>? groups = [];
+	PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
+    private bool getGroupsError;
+    private bool shouldRender;
+
+    protected override bool ShouldRender() => shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get,
+            "https://api.github.com/repos/dotnet/AspNetCore.Docs/branches");
+        request.Headers.Add("Accept", "application/vnd.github.v3+json");
+        request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+
+        var client = ClientFactory.CreateClient();
+
+        var response = await client.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+            groups = await JsonSerializer.DeserializeAsync
+                <IEnumerable<Group>>(responseStream);
+        }
+        else
+        {
+            getGroupsError = true;
+        }
+
+        shouldRender = true;
+    }
+	
+	void Edit(Group group){
+       
+    }
+
+    void Delete(Group group) 
+	{
+	
+	}
+    
+	public class Group
+    {
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+		[JsonPropertyName("createdDateTime")]
+		public DateTime CreatedDateTime { get; set; }
+		[JsonPropertyName("updatedDateTime")]
+		public DateTime? UpdatedDateTime { get; set; }
+    }
+}

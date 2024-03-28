@@ -1,4 +1,4 @@
-﻿using KingPriceTest.DAL.Models;
+﻿using KingPriceTest.BLL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,15 +18,6 @@ namespace KingPriceTest.DAL.Configurations
            	builder.Property(e => e.CreatedDateTime);
 			
 			builder.Property(e => e.UpdatedDateTime);
-
-
-
-            builder.HasData(
-                new Permission(1, "Admin", DateTime.Now,null),
-				new Permission(2, "SuperUser", DateTime.Now,null),
-				new Permission(3, "User", DateTime.Now,null),
-				new Permission(4, "Restricted", DateTime.Now,null)
-				);
                 
         }
     }

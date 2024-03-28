@@ -1,0 +1,92 @@
+﻿@page "/user"
+@attribute [StreamRendering]
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@inject IHttpClientFactory ClientFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>User</PageTitle>
+
+<h1>User</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <EditForm Model="person" OnSubmit="AddPerson" Enhance>
+                        <div class="hstack gap-2">
+                            <label class="label-control">First Name</label>
+                            <InputText @bind-Value="person.FirstName" class="form-control"></InputText>
+                            
+							<label class="label-control">Last Name</label>
+                            <InputText @bind-Value="person.LastName" class="form-control"></InputText>
+							
+							<label class="label-control">Email</label>
+                            <InputText @bind-Value="person.Email" class="form-control"></InputText>
+							
+							<label class="label-control">Password</label>
+                            <InputText @bind-Value="person.Password" class="form-control"></InputText>
+							
+							<label class="label-control">Approved</label>
+							<InputCheckbox @bind-Value=person.Approved />
+							
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </EditForm>
+                </div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+     [SupplyParameterFromForm]
+    Person person { get; set; } = new();
+	
+	protected override void OnInitialized()
+    {
+        
+    }
+    async Task AddPerson()
+    {
+         // Update
+        if (person.PersonId > 0)
+        {
+            var p = PersonsList.FirstOrDefault(_ => _.PersonId == person.PersonId);
+            if (p is null) return;
+            PersonsList.Remove(p); PersonsList.Add(person); person = new();
+            GetDataAgain(); 
+            return;
+        }
+
+        //Add
+        
+        if (person.Name is null) return;
+        person.PersonId = PersonsList.Count + 1;
+        PersonsList.Add(person); 
+        person = new();
+        GetDataAgain();
+        NavigationManager.NavigateTo($"users");
+    }
+	
+	public class User
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+		[JsonPropertyName("firstName")]
+        public string? FirstName { get; set; }
+		[JsonPropertyName("lastName")]
+        public string? LastName { get; set; }
+		[JsonPropertyName("email")]
+        public string? Email { get; set; }
+		[JsonPropertyName("password")]
+        public string? Password { get; set; }
+		[JsonPropertyName("approved")]
+        public bool Approved { get; set; }
+        [JsonPropertyName("createdDateTime")]
+		public DateTime CreatedDateTime { get; set; }
+		[JsonPropertyName("updatedDateTime")]
+		public DateTime? UpdatedDateTime { get; set; }
+    }
+}
